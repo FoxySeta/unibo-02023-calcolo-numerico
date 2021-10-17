@@ -1,6 +1,6 @@
 # Università di Bologna
 # Corso di laurea in Informatica
-# 37635 - Algoritmi e strutture di dati
+# 02023 - Calcolo numerico
 # 29/09/2021
 # 
 # Stefano Volpe #969766
