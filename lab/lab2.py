@@ -237,5 +237,3 @@ def es7():
   plt.ylabel('Relative error')
   plt.title('Iterative methods comparison')
   plt.show()
-
-es7()
