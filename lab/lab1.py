@@ -24,7 +24,7 @@ def es1():
     # max_exp: maximum int e such that radix**(e-1) is representable
     # max_10_exp: maximum int e such that 10**e is representable
 
-def es2(epsilon = 1.0):
+def es2():
     """
     Write a code to compute the machine precision ϵ in (float) default
     precision with a WHILE construct. Compute also the mantissa digits number.
