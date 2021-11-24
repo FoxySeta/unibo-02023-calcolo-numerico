@@ -107,135 +107,140 @@ def es1():
     - plotta, al variare delle iterazioni, la funzione obiettivo, l'errore e la
     norma del gradiente.
     '''
-    def f(x,y):
-        return (x-1)**2 - (y-2)**2
+    def f(x, y):
+        return (x - 1) ** 2 - (y - 2) ** 2
 
-
-    x = np.linspace(-1.5,3.5,100)
-    y = np.linspace(-1,5,100)
+    x = np.linspace(-1.5, 3.5, 100)
+    y = np.linspace(-1, 5, 100)
     X, Y = np.meshgrid(x, y)
-    Z=f(X,Y)
+    Z=f(X, Y)
 
-    plt.figure(figsize=(15, 8))
+    plt.figure(figsize = (15, 8))
 
-    ax1 = plt.subplot(1, 2, 1, projection='3d')
-    ax1.plot_surface(X, Y, Z, cmap='viridis')
+    ax1 = plt.subplot(1, 2, 1, projection = '3d')
+    ax1.plot_surface(X, Y, Z, cmap = 'viridis')
     ax1.set_title('Surface plot')
-    ax1.view_init(elev=20)
+    ax1.view_init(elev = 20)
 
-    ax2 = plt.subplot(1, 2, 2, projection='3d')
-    ax2.plot_surface(X, Y, Z, cmap='viridis')
+    ax2 = plt.subplot(1, 2, 2, projection = '3d')
+    ax2.plot_surface(X, Y, Z, cmap = 'viridis')
     ax2.set_title('Surface plot from a different view')
-    ax2.view_init(elev=5)
+    ax2.view_init(elev = 5)
     plt.show()
 
-    #plt.figure(figsize=(8, 5))
+    # plt.figure(figsize=(8, 5))
 
-    contours = plt.contour(X, Y, Z, levels=10)
+    contours = plt.contour(X, Y, Z, levels = 10)
     plt.title('Contour plot')
     plt.show()
 
-    def next_step(x,grad): # backtracking procedure for the choice of the steplength
-      alpha=1.1
-      rho = 0.5
-      c1 = 0.25
-      p=-grad
-      j=0
-      jmax=10
-      while ((f(x[0]+alpha*p[0],x[1]+alpha*p[1]) > f(x[0],x[1])+c1*alpha*grad.T@p) and j<jmax ):
-        alpha= rho*alpha
-        j+=1
-      if (j>jmax):
-        return -1
-      else:
-        #print('alpha=',alpha)
-        return alpha
+    # backtracking procedure for the choice of the steplength
+    def next_step(x, grad):
+        alpha = 1.1
+        rho = 0.5
+        c1 = 0.25
+        p = -grad
+        j = 0
+        jmax = 10
+        while f(x[0] + alpha * p[0], x[1] + alpha * p[1]) > f(x[0], x[1]) + c1 \
+            * alpha * grad.T @ p and j < jmax:
+            alpha = rho * alpha
+            j += 1
+        if (j>jmax):
+            return -1
+        else:
+            # print('alpha = ',alpha)
+            return alpha
 
-    def minimize(x0,b,mode,step,MAXITERATION,ABSOLUTE_STOP): # funzione che implementa il metodo del gradiente
-      #declare x_k and gradient_k vectors
-      if mode=='plot_history':
-        x=np.zeros((2,MAXITERATION))
+    # funzione che implementa il metodo del gradiente
+    def minimize(x0, b, mode, step, MAXITERATION, ABSOLUTE_STOP):
+        # declare x_k and gradient_k vectors
+        if mode == 'plot_history':
+            x = np.zeros((2, MAXITERATION))
 
-      norm_grad_list=np.zeros((1,MAXITERATION))
-      function_eval_list=np.zeros((1,MAXITERATION))
-      error_list=np.zeros((1,MAXITERATION))
+        norm_grad_list = np.zeros((1, MAXITERATION))
+        function_eval_list = np.zeros((1, MAXITERATION))
+        error_list = np.zeros((1, MAXITERATION))
       
-      #initialize first values
-      x_last = np.array([x0[0],x0[1]])
+        #initialize first values
+        x_last = np.array([x0[0], x0[1]])
 
-      if mode=='plot_history':
-        x[:,0] = x_last
+        if mode == 'plot_history':
+            x[:, 0] = x_last
       
-      k=0
+        k = 0
 
-      function_eval_list[:,k]=f(x_last[0], x_last[1])
-      error_list[:,k]=np.linalg.norm(x_last-b)
-      norm_grad_list[:,k]=np.linalg.norm(grad_f(x_last))
+        function_eval_list[:, k] = f(x_last[0], x_last[1])
+        error_list[:, k] = np.linalg.norm(x_last - b)
+        norm_grad_list[:, k] = np.linalg.norm(grad_f(x_last))
 
-      while (np.linalg.norm(grad_f(x_last))>ABSOLUTE_STOP and k < MAXITERATION ):
-        k=k+1
-        grad = grad_f(x_last)#direction is given by gradient of the last iteration
+        while np.linalg.norm(grad_f(x_last)) > ABSOLUTE_STOP \
+            and k < MAXITERATION:
+            k = k + 1
+            # direction is given by gradient of the last iteration
+            grad = grad_f(x_last)
 
-        # backtracking step
-        step = next_step(x_last,grad)
-        # Fixed step
-        #step = 0.1
+            # backtracking step
+            step = next_step(x_last, grad)
+            # Fixed step
+            # step = 0.1
         
-        if(step==-1):
-          print('non convergente')
-          return (iteration) #no convergence
+            if(step == -1):
+                print('non convergente')
+                return k # no convergence
 
-        x_last=x_last-step*grad
-        if mode=='plot_history':
-          x[:,k] = x_last
+            x_last = x_last - step * grad
+            if mode == 'plot_history':
+                x[:, k] = x_last
 
-        function_eval_list[:,k]=f(x_last[0], x_last[1])
-        error_list[:,k]=np.linalg.norm(x_last-b)
-        norm_grad_list[:,k]=np.linalg.norm(grad_f(x_last))
+        function_eval_list[:, k] = f(x_last[0], x_last[1])
+        error_list[:, k] = np.linalg.norm(x_last - b)
+        norm_grad_list[:, k] = np.linalg.norm(grad_f(x_last))
 
-      function_eval_list = function_eval_list[:,:k+1]
-      error_list = error_list[:,:k+1]
-      norm_grad_list = norm_grad_list[:,:k+1]
+        function_eval_list = function_eval_list[:, :k + 1]
+        error_list = error_list[:, :k + 1]
+        norm_grad_list = norm_grad_list[:, :k + 1]
       
-      print('iterations=',k)
-      print('last guess: x=(%f,%f)'%(x[0,k],x[1,k]))
-     
-      #plots
-      if mode=='plot_history':
-        v_x0 = np.linspace(-5,5,500)
-        v_x1 = np.linspace(-5,5,500)
-        x0v,x1v = np.meshgrid(v_x0,v_x1)
-        z = f(x0v,x1v)
-        
-        plt.figure()
-        ax = plt.axes(projection='3d')
-        ax.plot_surface(v_x0, v_x1, z,cmap='viridis')
-        ax.set_title('Surface plot')
-        plt.show()
+        print('iterations = ',k)
+        print('last guess: x = (%f, %f)' % (x[0, k], x[1, k]))
+         
+        # plots
+        if mode == 'plot_history':
+            v_x0 = np.linspace(-5, 5, 500)
+            v_x1 = np.linspace(-5, 5, 500)
+            x0v, x1v = np.meshgrid(v_x0, v_x1)
+            z = f(x0v, x1v)
+            
+            plt.figure()
+            ax = plt.axes(projection = '3d')
+            ax.plot_surface(v_x0, v_x1, z, cmap = 'viridis')
+            ax.set_title('Surface plot')
+            plt.show()
 
-        # plt.figure(figsize=(8, 5))
-        contours = plt.contour(x0v, x1v, z, levels=100)
-        plt.plot(x[0,0:k],x[1,0:k],'*')
-        #plt.axis([-5,5,-5,5])
-        plt.axis ('equal')
-        plt.show()
-      return (x_last,norm_grad_list, function_eval_list, error_list, k)
+            # plt.figure(figsize=(8, 5))
+            contours = plt.contour(x0v, x1v, z, levels = 100)
+            plt.plot(x[0, 0:k],x[1, 0:k], '*')
+            # plt.axis([-5,5,-5,5])
+            plt.axis('equal')
+            plt.show()
+        return x_last, norm_grad_list, function_eval_list, error_list, k
 
-    b=np.array([1,2])
+    b = np.array([1,2])
 
-    def f(x1,x2):
-      res = 10*(x1-b[0])**2 + (x2-b[1])**2 
+    def f(x1, x2):
+      res = 10 * (x1 - b[0]) ** 2 + (x2 - b[1]) ** 2 
       return res
 
     def grad_f(x):
-      return np.array([20*(x[0]-b[0]),2*(x[1]-b[1])])
+        return np.array([20 * (x[0] - b[0]), 2 * (x[1] - b[1])])
 
-    step=0.1
-    MAXITERATIONS=1000
-    ABSOLUTE_STOP=1.e-5
-    mode='plot_history'
-    x0 = np.array((3,-5))
-    (x_last,norm_grad_list, function_eval_list, error_list, k)= minimize(x0, b,mode,step,MAXITERATIONS, ABSOLUTE_STOP)
+    step = 0.1
+    MAXITERATIONS = 1000
+    ABSOLUTE_STOP = 1.e-5
+    mode = 'plot_history'
+    x0 = np.array((3, -5))
+    x_last, norm_grad_list, function_eval_list, error_list, k = \
+        minimize(x0, b, mode, step, MAXITERATIONS, ABSOLUTE_STOP)
 
     plt.plot(norm_grad_list.T, 'o-')
     plt.xlabel('iter')
