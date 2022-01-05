@@ -65,18 +65,19 @@ def es0():
 
     # Immagine in floating point con valori tra 0 e 1
     X = data.camera().astype(np.float64) / 255.0
-    m, n = X.shape
 
-    # Genera il filtro di blur
-    K = # TODO
+    # Genera K, gli autovalori di A
+    len = 24
+    sigma = 3
+    K = psf_fft(gaussian_kernel(len, sigma), len, X.shape)
 
     # Genera il rumore
-    sigma = 0.02
-    noise = # TODO
+    sigma2 = 0.02
+    noise = np.random.normal(size = X.shape) * sigma2
 
     # Aggiungi blur e rumore
-    b = # TODO
-    PSNR = # TODO
+    b = A(X, K)
+    # PSNR = # TODO
 
     # Visualizziamo i risultati
     plt.figure(figsize = (30, 10))
@@ -87,11 +88,11 @@ def es0():
 
     ax2 = plt.subplot(1, 2, 2)
     ax2.imshow(b, cmap = 'gray', vmin = 0, vmax = 1)
-    plt.title(f'Immagine Corrotta (PSNR: {PSNR:.2f})')
+    #plt.title(f'Immagine Corrotta (PSNR: {PSNR:.2f})')
 
     plt.show()
-    PSNR = # TODO
-    MSE = # TODO
+    #PSNR = # TODO
+    #MSE = # TODO
     print('This is the MSE: ', MSE)
     print('This is the PSNR: ', PSNR)
 
@@ -105,15 +106,15 @@ def es1():
     - Analizzare la struttura restituita in output dalla function minimize.
     '''
     def f(X):
-        res = # TODO
+        # res = # TODO
         return np.sum(res)
 
     def df(X):
-        res = # TODO
+        # res = # TODO
         return res
 
     x0 = np.array([2, -10])
-    res = # TODO
+    # res = # TODO
 
     print(res)
     type(res)
