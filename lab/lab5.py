@@ -8,8 +8,8 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
-from skimage import data, metrics
-from scipy import signal
+from skimage import metrics
+from skimage.data import camera
 from numpy import fft
 from scipy.optimize import minimize
 
@@ -59,12 +59,12 @@ def es0():
         return np.real(fft.ifft2(K * x))
 
     # Moltiplicazione per A trasposta
-    def AT(x, K):
-        x = fft.fft2(x)
-        return np.real(fft.ifft2(np.conj(K) * x))
+    # def AT(x, K):
+        # x = fft.fft2(x)
+        # return np.real(fft.ifft2(np.conj(K) * x))
 
     # Immagine in floating point con valori tra 0 e 1
-    X = data.camera().astype(np.float64) / 255.0
+    X = camera().astype(np.float64) / 255.0
 
     # Genera K, gli autovalori di A
     len = 24
@@ -76,8 +76,9 @@ def es0():
     noise = np.random.normal(size = X.shape) * sigma2
 
     # Aggiungi blur e rumore
-    b = A(X, K)
-    # PSNR = # TODO
+    b = A(X, K) + noise
+    PSNR = metrics.peak_signal_noise_ratio(X, b)
+    # ATb = AT(b, K)
 
     # Visualizziamo i risultati
     plt.figure(figsize = (30, 10))
@@ -91,8 +92,8 @@ def es0():
     #plt.title(f'Immagine Corrotta (PSNR: {PSNR:.2f})')
 
     plt.show()
-    #PSNR = # TODO
-    #MSE = # TODO
+    PSNR = metrics.peak_signal_noise_ratio(X, b)
+    MSE = MSE = metrics.mean_squared_error(X, b)
     print('This is the MSE: ', MSE)
     print('This is the PSNR: ', PSNR)
 
@@ -106,16 +107,14 @@ def es1():
     - Analizzare la struttura restituita in output dalla function minimize.
     '''
     def f(X):
-        # res = # TODO
+        res = (X - np.ones(X.shape)) ** 2
         return np.sum(res)
 
     def df(X):
-        # res = # TODO
+        res = 2 * (X-np.ones(X.shape))
         return res
 
     x0 = np.array([2, -10])
-    # res = # TODO
+    res = minimize(f, x0, method = 'CG', jac = df)
 
     print(res)
-    type(res)
-    res.x
